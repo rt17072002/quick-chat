@@ -21,7 +21,7 @@ const LoginPage = () => {
             return;
         }
 
-        console.log({fullName, email, password, bio})
+        // console.log({fullName, email, password, bio})
 
         login(currState==="Sign up" ? "signup" : "login", {fullName, email, password, bio});
     }

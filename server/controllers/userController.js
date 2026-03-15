@@ -5,9 +5,7 @@ import cloudinary from "../lib/cloudinary.js";
 
 //signup a new user
 export const signup = async (req, res) => {
-    console.log("This is signup controller")
     const { fullName, email, password, bio } = req.body;
-    console.log({ fullName, email, password, bio })
     try {
 
         if (!fullName || !email || !password || !bio) {
@@ -23,11 +21,19 @@ export const signup = async (req, res) => {
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(password, salt);
 
-        const newUser = await User.create({ fullName, email, password: hashedPassword, bio });
+        let newUser = await User.create({ fullName, email, password: hashedPassword, bio });
 
         const token = generateToken(newUser._id);
 
-        res.json({ success: true, userData: newUser, token, message: "Account created successfully" });
+        newUser = newUser.toObject();
+        delete newUser.password;
+
+        res.json({
+            success: true,
+            userData: newUser,
+            token,
+            message: "Account created successfully"
+        });
     } catch (error) {
         res.json({ success: false, message: error.message });
     }
@@ -37,7 +43,6 @@ export const signup = async (req, res) => {
 export const login = async (req, res) => {
     try {
         const { email, password } = req.body;
-        console.log({ email, password })
         const userData = await User.findOne({ email })
 
         if (!userData || !(await bcrypt.compare(password, userData.password))) {
@@ -46,7 +51,16 @@ export const login = async (req, res) => {
 
         const token = generateToken(userData._id);
 
-        res.json({ success: true, message: "Logged in successfully", userData, token });
+        const user = userData.toObject();
+
+        delete user.password;
+
+        res.json({
+            success: true,
+            userData: user,
+            token,
+            message: "Login successfully"
+        });
 
     } catch (error) {
         res.json({ success: false, message: error.message });
@@ -81,6 +95,5 @@ export const updateProfile = async (req, res) => {
         res.json({ success: true, user: updatedUser })
     } catch (error) {
         res.json({ success: false, message: error.message });
-        console.log(error) 
     }
 }

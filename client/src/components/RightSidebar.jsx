@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react'
-import assets, { imagesDummyData } from '../assets/assets'
+import assets from '../assets/assets'
 import { ChatContext } from '../../contexts/ChatContext'
 import { AuthContext } from '../../contexts/AuthContext';
 
@@ -32,7 +32,7 @@ const RightSidebar = () => {
                 <p>Media</p>
                 <div className='mt-2 max-h-[200px] overflow-y-scroll grid grid-cols-2 gap-4 opacity-80'>
                     {msgImages.map((url, index) => (
-                        <div onClick={() => window.open(url)} key={index} className='cursor-pointer rounded'>
+                        <div onClick={() => window.open(url, "_blank")} key={url} className='cursor-pointer rounded'>
                             <img src={url} alt="" className='h-full rounded-md' />
                         </div>
                     ))}
